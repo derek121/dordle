@@ -7,8 +7,6 @@ defmodule Dordle do
   word at all.
   """
 
-  # TODO: Optional start param of max num guesses
-
   @word_file "priv/words.txt"
 
   @doc """
