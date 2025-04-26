@@ -6,7 +6,8 @@ Implementation of the word game [Wordle](https://en.wikipedia.org/wiki/Wordle).
 Six guesses to find the target 5-letter word. After each guess the guesses so
 far are output, each letter color-coded green if it's in the word and in the
 correct spot; yellow if it's in the word but in the wrong spot; and no color
-if it's not in the word at all.
+if it's not in the word at all. The word to guess is chosen at random from [a
+list](priv/words.txt) of more than 2000 words.
 
 ### Usage
 
