@@ -72,7 +72,6 @@ defmodule Dordle do
     :ok = Agent.update(__MODULE__, fn _state -> state end)
   end
 
-  # For testing
   def get_state() do
     Agent.get(__MODULE__, fn state -> state end)
   end
