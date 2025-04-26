@@ -12,8 +12,7 @@ defmodule Dordle do
   @word_file "priv/words.txt"
 
   @doc """
-  Set the internal state with a random word, or the one provided for fun or
-  testing.
+  Pick a random word and initialize internal state.
   """
   def start() do
     # Just read the word list every time, no point in caching it for our purposes
@@ -25,8 +24,12 @@ defmodule Dordle do
     |> _start()
   end
 
-  # Don't just fail-fast, but give a nice message instead of Crashing, since
-  # this is user-facing
+  # Don't just fail-fast if a word to use is given but not of length 5, but
+  # rather give a nice message instead of Crashing, since this is user-facing.
+  @doc """
+  Use the word provided instead of a random word (for fun or testing) and
+  initialize internal state.
+  """
   def start(word = <<_, _, _, _, _>>) do
     # Can't using String.length/1 in a guard, but the above is fine
     _start(word)
@@ -39,7 +42,7 @@ defmodule Dordle do
   #
 
   @doc """
-  Init state with the given word.
+  Initialize state with the given word.
   """
   def _start(word) do
     word = String.upcase(word)
@@ -65,13 +68,13 @@ defmodule Dordle do
     end
   end
 
+  def update_state(state) do
+    :ok = Agent.update(__MODULE__, fn _state -> state end)
+  end
+
   # For testing
   def get_state() do
     Agent.get(__MODULE__, fn state -> state end)
-  end
-
-  def update_state(state) do
-    :ok = Agent.update(__MODULE__, fn _state -> state end)
   end
 
   #
@@ -82,7 +85,7 @@ defmodule Dordle do
   def guess(guess = <<_, _, _, _, _>>) do
     # Can't using String.length/1 in a guard, but the above is fine
     get_state()
-    |> _guess(String.upcase(guess))
+    |> guess(String.upcase(guess))
     |> update_state()
 
     :ok
@@ -97,25 +100,27 @@ defmodule Dordle do
   @doc """
   Processes a guess and outputs the current guess results.
   """
-  def _guess(state = %State{game_over?: true}, _guess) do
+  def guess(state = %State{game_over?: true}, _guess) do
     IO.puts("Game has been completed")
 
     state
   end
 
-  def _guess(state, guess) do
-    state = _process_guess(state, guess)
+  def guess(state, guess) do
+    state = process_guess(state, guess)
 
     output(state.word, state.guesses, state.game_over?)
 
     state
   end
 
+  #
+
   @doc """
   Does the heavy lifting of checking the guess against the word being guessed,
   updating and returning state.
   """
-  def _process_guess(state = %State{}, guess) do
+  def process_guess(state = %State{}, guess) do
     # IO.puts("Guess: #{guess}. State: #{inspect(state)}")
 
     # ARISE
@@ -129,32 +134,35 @@ defmodule Dordle do
     locs_to_check = [1, 2, 3, 4, 5]
 
     # Exact matches
-    {exact_locs, word_cl} = find_exact_matches(locs_to_check, guess_cl, word_cl)
+    exact_locs = find_exact_matches(locs_to_check, guess_cl, word_cl)
 
     # Note on clearing and removing letter indices from consideration:
-    # Remove the exact_locs match indices from consideration for inexact (aka other)
-    # Otherwise, we'd have the situation like where the word to guess is ARROW
-    # and the guess is ARISE. The R in pos 2 is an exact match, but if we don't
-    # exclude it here from locs_to_check for other (inexact) matches, it would match
-    # the second R in ARROW (the first R in ARROW won't be matched because of it
-    # being cleared in find_exact_matches/3).
     #
-    # So-
-    # 1: The clearing of the exact match in word_cl in find_exact_matches/3
+    # 1) The clearing of the exact match positions in word_cl via the call to
+    # prevent_other_matches_in_guess_finding_exact_match_in_word/2 below
     # prevents an exact match being found by the same letter in an inexact
     # position in the guess.
     # E.g., if word_cl was ARISE and the guess was ARROW, we'd otherwise match
     # the second R of ARROW with the already-matched R in ARISE.
-    # And:
-    # 2: The exclusion here of exact_locs from
-    # locs_to_check prevents a given character in the guess that was an exact
-    # match from matching a different instance of that letter in word_cl.
-    # E.g., if word_cl was ARROW, and the guess was ARISE, we'd otherwise match
-    # in find_other_matches/3 the R in ARISE, already used as an exact match,
-    # with the second R in ARROW.
+    #
+    # 2) The removing of the exact_locs match positions in word_cl from
+    # consideration # for inexact (aka # "other") matches via the call to
+    # prevent_exact_match_in_guess_finding_other_matches_in_word/2 below
+    # prevents a different instance of a letter in the word to guess that had
+    # already been been an exact match from also being matched by the same
+    # instance of the matching letter in the guess. Otherwise, we'd have the
+    # situation such as where the word to guess is ARROW and the guess is ARISE.
+    # The R in pos 2 is an exact match, but if we don't exclude it here from
+    # locs_to_check in the guess, for other (inexact) matches, it would match
+    # the second R in ARROW (the first R in ARROW won't be matched because of
+    # 1) above.
 
-    # [1, 3, 4]
-    locs_to_check = locs_to_check -- exact_locs
+    # Regarding Note 1 in above comment
+    word_cl = prevent_other_matches_in_guess_finding_exact_match_in_word(word_cl, exact_locs)
+
+    # Regarding Note 2 in above comment
+    locs_to_check =
+      prevent_exact_match_in_guess_finding_other_matches_in_word(locs_to_check, exact_locs)
 
     # Other matches
     other_locs = find_other_matches(locs_to_check, guess_cl, word_cl)
@@ -180,13 +188,35 @@ defmodule Dordle do
   end
 
   @doc """
+  Clear the exact_locs matches in word_cl so they're not found when looking for
+  other matches.
+
+  *** See "Note on clearing and removing letter indices from consideration" in
+  process_guess/2 above for details.
+  """
+  def prevent_other_matches_in_guess_finding_exact_match_in_word(word_cl, exact_locs) do
+    exact_locs
+    |> List.foldl(word_cl, fn loc, acc -> List.replace_at(acc, loc - 1, ?.) end)
+  end
+
+  @doc """
+  Remove exact_locs from locs_to_check so they're not found again an other match.
+
+  *** See "Note on clearing and removing letter indices from consideration" in
+  process_guess/2 above for details.
+  """
+  def prevent_exact_match_in_guess_finding_other_matches_in_word(locs_to_check, exact_locs) do
+    locs_to_check -- exact_locs
+  end
+
+  @doc """
   Returns a list of the 1-based indices of guessed letters in the correct
   position (green-output guesses). Ensures that exact matches in the target
   word won't be found when checking of inexact matches by clearing the exact
   match letters.
 
   See "Note on clearing and removing letter indices from consideration" in
-  _process_guess/2 for details.
+  process_guess/2 for details.
   """
   def find_exact_matches(locs_to_check, guess_cl, word_cl) do
     # [2, 5]
@@ -204,18 +234,7 @@ defmodule Dordle do
     # [2, 5]
     # IO.inspect(exact_locs, label: "Exact")
 
-    # Clear the exact_locs matches in word_cl so they're not found when looking for
-    # other matches
-    # *** See "Note on clearing and removing letter indices from consideration" in
-    # _process_guess/2 for details.
-    # S.AQ.
-    word_cl =
-      exact_locs
-      |> List.foldl(word_cl, fn loc, acc -> List.replace_at(acc, loc - 1, ?.) end)
-
-    # IO.inspect(word_cl, label: "Now word_cl")
-
-    {exact_locs, word_cl}
+    exact_locs
   end
 
   @doc """
@@ -226,7 +245,7 @@ defmodule Dordle do
   incorrectly.
 
   See "Note on clearing and removing letter indices from consideration" in
-  _process_guess/2 for details.
+  process_guess/2 for details.
   """
   def find_other_matches(locs_to_check, guess_cl, word_cl) do
     # For each guess_char that wasn't an exact match, see if it's one of the
@@ -292,8 +311,8 @@ defmodule Dordle do
 
     rows_left = 6 - length(output_rows)
 
+    # if rows_left > 0 and not game_over? do
     output_rows =
-      #if rows_left > 0 and not game_over? do
       if rows_left > 0 do
         output_rows ++ List.duplicate(["___ ___ ___ ___ ___"], rows_left)
       else
