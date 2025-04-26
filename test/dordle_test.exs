@@ -52,7 +52,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "ZZZZZ", exact_locs: [], other_locs: []]]
@@ -65,7 +65,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "ARISE", exact_locs: [2, 5], other_locs: [1, 4]]]
@@ -78,7 +78,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "SZZQZ", exact_locs: [1, 4], other_locs: []]]
@@ -91,7 +91,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: true,
+               game_over?: true,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "SRAQE", exact_locs: [1, 2, 3, 4, 5], other_locs: []]]
@@ -104,7 +104,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "ZSQZZ", exact_locs: [], other_locs: [2, 3]]]
@@ -117,7 +117,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "RAQES", exact_locs: [], other_locs: [1, 2, 3, 4, 5]]]
@@ -130,7 +130,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"SRAQE",
                num_guessed: 1,
                guesses: [[guess: "SAZQR", exact_locs: [1, 4], other_locs: [2, 5]]]
@@ -143,7 +143,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: false,
+               game_over?: false,
                word: ~c"ABCDE",
                num_guessed: 1,
                guesses: [[guess: "CBEDA", exact_locs: [2, 4], other_locs: [1, 3, 5]]]
@@ -163,7 +163,7 @@ defmodule DordleTest do
 
     assert state ==
              %State{
-               game_over: true,
+               game_over?: true,
                word: ~c"MNOPQ",
                num_guessed: 6,
                guesses: [
@@ -184,7 +184,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARISE", exact_locs: [2, 4], other_locs: [5]]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARISE")
@@ -192,7 +192,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "FRESH", exact_locs: [2, 3, 4], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "FRESH")
@@ -200,7 +200,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "WREST", exact_locs: [2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "WREST")
@@ -208,7 +208,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: true,
+               game_over?: true,
                guesses: [[guess: "CREST", exact_locs: [1, 2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "CREST")
@@ -220,7 +220,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARISE", exact_locs: [], other_locs: [1]]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARISE")
@@ -228,7 +228,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "CHANT", exact_locs: [], other_locs: [2, 3]]]
              },
              Dordle._process_guess(Dordle.get_state(), "CHANT")
@@ -236,7 +236,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "GAUCH", exact_locs: [2, 3, 5], other_locs: [1]]]
              },
              Dordle._process_guess(Dordle.get_state(), "GAUCH")
@@ -244,7 +244,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: true,
+               game_over?: true,
                guesses: [[guess: "LAUGH", exact_locs: [1, 2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "LAUGH")
@@ -256,7 +256,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARISE", exact_locs: [4, 5], other_locs: [2]]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARISE")
@@ -264,7 +264,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ROUSE", exact_locs: [4, 5], other_locs: [1, 3]]]
              },
              Dordle._process_guess(Dordle.get_state(), "ROUSE")
@@ -272,7 +272,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "PURSE", exact_locs: [2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "PURSE")
@@ -280,7 +280,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "CURSE", exact_locs: [2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "CURSE")
@@ -288,7 +288,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: true,
+               game_over?: true,
                guesses: [[guess: "NURSE", exact_locs: [1, 2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "NURSE")
@@ -300,7 +300,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARISE", exact_locs: [1, 2], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARISE")
@@ -308,7 +308,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARMOR", exact_locs: [1, 2, 4], other_locs: [5]]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARMOR")
@@ -316,7 +316,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: true,
+               game_over?: true,
                guesses: [[guess: "ARROW", exact_locs: [1, 2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARROW")
@@ -328,7 +328,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARISE", exact_locs: [], other_locs: [2]]]
              },
              Dordle._process_guess(Dordle.get_state(), "ARISE")
@@ -336,7 +336,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [
                  #  [guess: "ARISE", exact_locs: [], other_locs: [2]],
                  [guess: "ROUND", exact_locs: [], other_locs: [1, 2, 3]]
@@ -347,7 +347,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "FLOUR", exact_locs: [], other_locs: [3, 4, 5]]]
              },
              Dordle._process_guess(Dordle.get_state(), "FLOUR")
@@ -355,7 +355,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "CURIO", exact_locs: [2, 3, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "CURIO")
@@ -363,7 +363,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "BURRO", exact_locs: [2, 3, 5], other_locs: [1]]]
              },
              Dordle._process_guess(Dordle.get_state(), "BURRO")
@@ -371,7 +371,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: true,
+               game_over?: true,
                guesses: [[guess: "TURBO", exact_locs: [1, 2, 3, 4, 5], other_locs: []]]
              },
              Dordle._process_guess(Dordle.get_state(), "TURBO")
@@ -388,7 +388,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [[guess: "ARISE", exact_locs: [], other_locs: [1, 2, 4, 5]]]
              },
              state
@@ -399,7 +399,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [
                  [guess: "ARISE", exact_locs: [], other_locs: [1, 2, 4, 5]],
                  [guess: "STARE", exact_locs: [1], other_locs: [3, 4, 5]]
@@ -413,7 +413,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [
                  [guess: "ARISE", exact_locs: [], other_locs: [1, 2, 4, 5]],
                  [guess: "STARE", exact_locs: [1], other_locs: [3, 4, 5]],
@@ -428,7 +428,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [
                  [guess: "ARISE", exact_locs: [], other_locs: [1, 2, 4, 5]],
                  [guess: "STARE", exact_locs: [1], other_locs: [3, 4, 5]],
@@ -444,7 +444,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: false,
+               game_over?: false,
                guesses: [
                  [guess: "ARISE", exact_locs: [], other_locs: [1, 2, 4, 5]],
                  [guess: "STARE", exact_locs: [1], other_locs: [3, 4, 5]],
@@ -461,7 +461,7 @@ defmodule DordleTest do
 
     assert match?(
              %State{
-               game_over: true,
+               game_over?: true,
                guesses: [
                  [guess: "ARISE", exact_locs: [], other_locs: [1, 2, 4, 5]],
                  [guess: "STARE", exact_locs: [1], other_locs: [3, 4, 5]],
@@ -477,6 +477,7 @@ defmodule DordleTest do
 
   ###
 
+  # For visual examination
   @tag :skip
   test "output" do
     guesses = [
@@ -488,11 +489,13 @@ defmodule DordleTest do
       [guess: "SHEAR", exact_locs: [1, 2, 3, 4, 5], other_locs: []]
     ]
 
-    Dordle.output(guesses)
+    Dordle.output(~C"SHEAR", guesses, false)
   end
 
   #
 
+  # For visual examination
+  @tag :skip
   test "guess" do
     Dordle.start("SHEAR")
 
@@ -514,5 +517,21 @@ defmodule DordleTest do
     Dordle.guess("SHEAR")
 
     IO.inspect(Dordle.get_state(), label: "Final State")
+  end
+
+  test "create_rows_chars_to_which" do
+    guesses = [
+      [guess: "ARISE", exact_locs: [5], other_locs: [1, 4]],
+      [guess: "SEATS", exact_locs: [1, 3, 4], other_locs: [2]]
+    ]
+
+    actual = Dordle.create_rows_chars_to_which(guesses)
+
+    expected = [
+      [{65, :other}, {82, :none}, {73, :none}, {83, :other}, {69, :exact}],
+      [{83, :exact}, {69, :other}, {65, :exact}, {84, :exact}, {83, :none}]
+    ]
+
+    assert actual == expected
   end
 end
