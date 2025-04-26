@@ -185,10 +185,8 @@ defmodule Dordle do
   word won't be found when checking of inexact matches by clearing the exact
   match letters.
 
-  For example, for the word being SHEAR and the guess being SAFER:
-  {[1, 5], ~c".HEA."}
-  since the S and the R are exact matches- [1, 5] is returned, and those
-  characters are cleared as mentioned in the comment above.
+  See "Note on clearing and removing letter indices from consideration" in
+  _process_guess/2 for details.
   """
   def find_exact_matches(locs_to_check, guess_cl, word_cl) do
     # [2, 5]
@@ -227,19 +225,8 @@ defmodule Dordle do
   characters that were exact matches cleared so we won't match them here
   incorrectly.
 
-  For example, if the word is SHEAR, and the guess was SAFER. The previous
-  exact match check would find that the S and the R were exact, in positionss
-  1 and 5, so locs_to_check omits those (1-based) indices, and they are replaced
-  with a period in word_cl:
-
-  locs_to_check: [2, 3, 4]
-  guess_cl: ~c"SAFER"
-  word_cl: ~c".HEA."
-
-  The check here for Other Matches will find that the A and the E in SAFER
-  are such, and so the return value is:
-
-  [2, 4]
+  See "Note on clearing and removing letter indices from consideration" in
+  _process_guess/2 for details.
   """
   def find_other_matches(locs_to_check, guess_cl, word_cl) do
     # For each guess_char that wasn't an exact match, see if it's one of the
