@@ -56,11 +56,9 @@ defmodule Dordle do
   def init_state(state) do
     case Process.whereis(__MODULE__) do
       nil ->
-        # IO.puts("Starting agent #{__MODULE__}")
         {:ok, _pid} = Agent.start(fn -> state end, name: __MODULE__)
 
       _ ->
-        # IO.puts("Stopping and starting agent #{__MODULE__}")
         :ok = Agent.stop(__MODULE__)
         {:ok, _pid} = Agent.start(fn -> state end, name: __MODULE__)
     end
@@ -118,14 +116,8 @@ defmodule Dordle do
   updating and returning state.
   """
   def process_guess(state = %State{}, guess) do
-    # IO.puts("Guess: #{guess}. State: #{inspect(state)}")
-
-    # ARISE
     guess_cl = to_charlist(guess)
-
-    # SRAQE
     word_cl = state.word
-    # IO.inspect(word_cl, label: "word_cl")
 
     # One-based for sanity when thinking of the board as a human
     locs_to_check = [1, 2, 3, 4, 5]
@@ -228,9 +220,6 @@ defmodule Dordle do
         end
       end)
 
-    # [2, 5]
-    # IO.inspect(exact_locs, label: "Exact")
-
     exact_locs
   end
 
@@ -292,19 +281,15 @@ defmodule Dordle do
   ]
   """
   def output(answer, guesses, game_over?) do
-    # IO.inspect(guesses, label: "guesses")
-
     # [
     #   [{65, :exact}, {82, :exact}, {73, :none}, {83, :none}, {69, :other}],
     #   [{90, :none}, {90, :none}, {83, :none}, {90, :none}, {90, :none}],
     #   [{90, :none}, {90, :none}, {78, :other}, {90, :none}, {90, :none}],
     #   ...
     # ]
+    # Also used for printing the keyboard below
     rows_chars_to_which = create_rows_chars_to_which(guesses)
-    # IO.inspect(rows_chars_to_which, label: "rows....")
-
     output_rows = colorize_rows(rows_chars_to_which)
-    # |> IO.inspect(label: "OUT")
 
     rows_left = 6 - length(output_rows)
 
@@ -378,8 +363,6 @@ defmodule Dordle do
   def create_rows_chars_to_which(guesses) do
     guesses
     |> Enum.map(fn guess ->
-      # IO.inspect(guess, label: "guess")
-
       guess_cl = to_charlist(guess[:guess])
       # [1, 5]
       exact_locs = guess[:exact_locs]
@@ -387,7 +370,6 @@ defmodule Dordle do
       other_locs = guess[:other_locs]
 
       # Pair exact matches with the atom :exact for use below
-      # SAFER
       # [{1, :exact}, {5, :exact}]
       exact_pairs = Enum.zip(exact_locs, List.duplicate(:exact, length(exact_locs)))
 
@@ -415,7 +397,6 @@ defmodule Dordle do
         end)
 
       char_to_which
-      # |> IO.inspect(label: "char_to_which")
     end)
   end
 
@@ -489,15 +470,11 @@ defmodule Dordle do
       |> Enum.filter(fn {_char, which} -> which == :exact end)
       |> Map.new()
 
-    # |> IO.inspect(label: "Exact")
-
     # %{69 => :other, 83 => :other}
     other_matches =
       all
       |> Enum.filter(fn {_char, which} -> which == :other end)
       |> Map.new()
-
-    # |> IO.inspect(label: "Other")
 
     # %{?A => :none, ...} for all 26 letters
     none_matches =
